@@ -1,10 +1,17 @@
 package com.binance.client.model.user;
 
 import com.binance.client.constant.BinanceApiConstants;
+import com.binance.client.model.enums.OrderSide;
+import com.binance.client.model.enums.OrderState;
+import com.binance.client.model.trade.Order;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderUpdate {
 
     private String symbol;
@@ -267,6 +274,26 @@ public class OrderUpdate {
         this.callbackRate = callbackRate;
     }
 
+    public boolean isFullyFilled() {
+        return OrderState.FILLED.name().equals(orderStatus);
+    }
+
+    public boolean isActive() {
+        return OrderState.aliveStates.contains(orderStatus);
+    }
+
+    public boolean isActiveOrDone() {
+        return isActive() || OrderState.FILLED.name().equals(orderStatus);
+    }
+
+    public boolean isSell() {
+        return OrderSide.SELL.name().equals(side);
+    }
+
+    public boolean isBuy() {
+        return OrderSide.BUY.name().equals(side);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, BinanceApiConstants.TO_STRING_BUILDER_STYLE).append("symbol", symbol)
@@ -281,5 +308,9 @@ public class OrderUpdate {
                 .append("isMarkerSide", isMarkerSide).append("isReduceOnly", isReduceOnly)
                 .append("workingType", workingType).append("activationPrice", activationPrice)
                 .append("callbackRate", callbackRate).toString();
+    }
+
+    public boolean isNew() {
+        return OrderState.NEW.name().equals(orderStatus);
     }
 }

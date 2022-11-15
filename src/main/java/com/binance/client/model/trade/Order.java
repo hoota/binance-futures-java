@@ -1,10 +1,16 @@
 package com.binance.client.model.trade;
 
 import com.binance.client.constant.BinanceApiConstants;
+import com.binance.client.model.enums.OrderSide;
+import com.binance.client.model.enums.OrderState;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Order {
 
     private String clientOrderId;
@@ -176,4 +182,29 @@ public class Order {
                 .append("stopPrice", stopPrice).append("symbol", symbol).append("timeInForce", timeInForce)
                 .append("type", type).append("updateTime", updateTime).append("workingType", workingType).toString();
     }
+
+    public boolean isFullyFilled() {
+        return OrderState.FILLED.name().equals(status);
+    }
+
+    public boolean isCanceled() {
+        return OrderState.CANCELED.name().equals(status) || OrderState.PARTIALCANCELED.name().equals(status);
+    }
+
+    public boolean isActive() {
+        return OrderState.aliveStates.contains(status);
+    }
+
+    public boolean isActiveOrDone() {
+        return isActive() || OrderState.FILLED.name().equals(status);
+    }
+
+    public boolean isSell() {
+        return OrderSide.SELL.name().equals(side);
+    }
+
+    public boolean isBuy() {
+        return OrderSide.BUY.name().equals(side);
+    }
+
 }

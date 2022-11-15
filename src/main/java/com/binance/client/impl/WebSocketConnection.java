@@ -26,7 +26,7 @@ public class WebSocketConnection extends WebSocketListener {
     private volatile long lastReceivedTime = 0;
 
     private volatile ConnectionState state = ConnectionState.IDLE;
-    private int delayInSecond = 0;
+    private long delayInSecond = 0;
 
     private final WebsocketRequest request;
     private final Request okhttpRequest;
@@ -141,6 +141,7 @@ public class WebSocketConnection extends WebSocketListener {
         try {
             obj = request.jsonParser.parseJson(jsonWrapper);
         } catch (Exception e) {
+            log.info(jsonWrapper.getJson().toString());
             onError("Failed to parse server's response: " + e.getMessage(), e);
         }
         try {

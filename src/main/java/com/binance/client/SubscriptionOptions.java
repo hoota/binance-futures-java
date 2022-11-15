@@ -2,6 +2,7 @@ package com.binance.client;
 
 import com.binance.client.exception.BinanceApiException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The configuration for the subscription APIs
@@ -10,8 +11,8 @@ public class SubscriptionOptions {
 
     private String uri = "wss://api.binance.pro/";
     private boolean isAutoReconnect = true;
-    private int receiveLimitMs = 300_000;
-    private int connectionDelayOnFailure = 15;
+    private long receiveLimitMs = TimeUnit.DAYS.toMillis(1);
+    private int connectionDelayOnFailure = 1;
 
     public SubscriptionOptions(SubscriptionOptions options) {
         this.uri = options.uri;
@@ -44,7 +45,7 @@ public class SubscriptionOptions {
      *
      * @param receiveLimitMs The receive limit in millisecond.
      */
-    public void setReceiveLimitMs(int receiveLimitMs) {
+    public void setReceiveLimitMs(long receiveLimitMs) {
         this.receiveLimitMs = receiveLimitMs;
     }
 
@@ -66,7 +67,7 @@ public class SubscriptionOptions {
      * <li>Caused by network problem</li>
      * <li>The connection close triggered by server (happened every 24 hours)</li>
      * <li>No any message can be received from server within a specified time, see
-     * {@link #setReceiveLimitMs(int)} (int)}</li>
+     * {@link #setReceiveLimitMs(long)} (int)}</li>
      * </ul>
      *
      * @param isAutoReconnect The boolean flag, true for enable, false for disable
@@ -81,7 +82,7 @@ public class SubscriptionOptions {
         return isAutoReconnect;
     }
 
-    public int getReceiveLimitMs() {
+    public long getReceiveLimitMs() {
         return receiveLimitMs;
     }
 

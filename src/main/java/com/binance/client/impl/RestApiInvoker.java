@@ -11,10 +11,15 @@ import org.slf4j.LoggerFactory;
 import com.binance.client.exception.BinanceApiException;
 import com.binance.client.impl.utils.JsonWrapper;
 
+import java.util.concurrent.TimeUnit;
+
 abstract class RestApiInvoker {
 
     private static final Logger log = LoggerFactory.getLogger(RestApiInvoker.class);
     private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient wsClient = new OkHttpClient().newBuilder()
+            .readTimeout(24, TimeUnit.HOURS)
+            .pingInterval(10, TimeUnit.SECONDS).build();
 
     static void checkResponse(JsonWrapper json) {
         try {
@@ -73,7 +78,7 @@ abstract class RestApiInvoker {
     }
 
     static WebSocket createWebSocket(Request request, WebSocketListener listener) {
-        return client.newWebSocket(request, listener);
+        return wsClient.newWebSocket(request, listener);
     }
 
 }
